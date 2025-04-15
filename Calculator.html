@@ -6,7 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Functional Calculator</title>
 </head>
-<body class="flex bg-gray-100 min-h-screen items-center justify-center">
+<body class="flex bg-gray-100 h-auto items-center justify-center">
   <main class="m-auto my-0.5 rounded-lg shadow-lg border-2 p-4 bg-white">
     <input id="display" readonly class="bg-slate-700 w-full text-white rounded-full h-14 text-right text-3xl p-2 mb-4 shadow" type="text">
     
@@ -50,22 +50,34 @@
 
     function toggleSign() {
       if (display.value) {
-        if (display.value.startsWith('-')) {
-          display.value = display.value.slice(1);
-        } else {
-          display.value = '-' + display.value;
-        }
+        display.value = display.value.startsWith('-')
+          ? display.value.slice(1)
+          : '-' + display.value;
       }
     }
 
     function calculate() {
       try {
-        // Evaluate the expression and fix float precision
         display.value = eval(display.value).toString();
       } catch {
         display.value = 'Error';
       }
     }
+
+    // Keyboard support
+    document.addEventListener('keydown', function (event) {
+      const key = event.key;
+
+      if (!isNaN(key) || ['+', '-', '*', '/', '.', '%'].includes(key)) {
+        appendValue(key);
+      } else if (key === 'Enter' || key === '=') {
+        calculate();
+      } else if (key === 'Backspace') {
+        display.value = display.value.slice(0, -1);
+      } else if (key === 'Escape') {
+        clearDisplay();
+      }
+    });
   </script>
 </body>
 </html>
